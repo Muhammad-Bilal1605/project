@@ -1,41 +1,53 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Heart } from 'lucide-react';
 import Button from './Button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const navLinks = [
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'Discover', href: '#featured' },
-    { label: 'About us', href: '#about' },
-    { label: 'Support', href: '#support' },
+    { label: 'Home', href: '/' },
+    { label: 'How it works', href: '/how-it-works' },
+    { label: 'Discover', href: '/discover' },
+    { label: 'About us', href: '/about' },
+    { label: 'Support', href: '/support' },
   ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer group">
+          <Link to="/" className="flex items-center gap-2 cursor-pointer group">
             <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
               <Heart className="w-5 h-5 text-white" fill="currentColor" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">FundRise</h1>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
-                className="text-gray-600 hover:text-amber-700 font-medium text-sm transition-colors duration-200"
+                to={link.href}
+                className={`font-medium text-sm transition-colors duration-200 relative group ${
+                  isActive(link.href) 
+                    ? 'text-amber-700' 
+                    : 'text-gray-600 hover:text-amber-700'
+                }`}
               >
                 {link.label}
-              </a>
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-amber-600 transition-all duration-300 ${
+                  isActive(link.href) ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}></span>
+              </Link>
             ))}
           </div>
 
@@ -64,17 +76,21 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="md:hidden py-4 border-t border-gray-200 animate-fadeIn">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
-                  className="text-gray-600 hover:text-amber-700 font-medium py-2 transition-colors"
+                  to={link.href}
+                  className={`font-medium py-2 transition-colors ${
+                    isActive(link.href)
+                      ? 'text-amber-700'
+                      : 'text-gray-600 hover:text-amber-700'
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="pt-4 border-t border-gray-200 flex flex-col gap-3">
                 <Button variant="ghost" size="md" fullWidth>
